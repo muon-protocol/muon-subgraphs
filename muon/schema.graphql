@@ -1,0 +1,12 @@
+type TransactionEntity @entity {
+  id: ID!
+  blockNo: BigInt!
+  txnHash: Bytes!
+  blockHash: Bytes!
+  time: BigInt!
+}
+
+type TransactionsCountEntity @entity {
+  id: ID!
+  count: Int!
+}

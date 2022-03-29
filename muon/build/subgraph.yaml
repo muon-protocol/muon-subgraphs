@@ -1,0 +1,25 @@
+specVersion: 0.0.2
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MuonV02
+    network: mainnet
+    source:
+      address: "0xE4F8d9A30936a6F8b17a73dC6fEb51a3BBABD51A"
+      abi: MuonV02
+      startBlock: 13607273
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - TransactionsCountEntity
+      abis:
+        - name: MuonV02
+          file: MuonV02/abis/MuonV02.json
+      eventHandlers:
+        - event: Transaction(bytes,address[])
+          handler: handleTransaction
+      file: MuonV02/MuonV02.wasm

@@ -1,0 +1,23 @@
+type DepositEntity @entity {
+  id: ID!
+  blockNo: BigInt!
+  txnHash: Bytes!
+  blockHash: Bytes!
+  time: BigInt!
+  txId: BigInt!
+  tokenId: BigInt!
+  toChain: BigInt!
+  user: Bytes!
+  nftIds: [BigInt!]!
+}
+
+type ClaimEntity @entity {
+  id: ID!
+  blockNo: BigInt!
+  txnHash: Bytes!
+  blockHash: Bytes!
+  time: BigInt!
+  user: Bytes!
+  txId: BigInt!
+  fromChain: BigInt!
+}
