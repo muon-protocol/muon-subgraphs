@@ -1,6 +1,5 @@
 # Builds and generated
 /build
-/generated
 
 # Logs
 logs
@@ -68,4 +67,3 @@ typings/
 .DS_Store
 
 build/
-generated/
