@@ -1,4 +1,5 @@
 {
   "network": "ropsten",
-  "address": "0x4952eC5718f0E3cEDffb23C964849476B92c2e76"
+  "address": "0x4952eC5718f0E3cEDffb23C964849476B92c2e76",
+  "startBlock": 12151195
 }
