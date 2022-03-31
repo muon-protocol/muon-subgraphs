@@ -1,6 +1,23 @@
-type ExampleEntity @entity {
+type DepositEntity @entity {
   id: ID!
-  count: BigInt!
-  addr: Bytes! # address
-  tokenId: BigInt! # uint256
+  blockNo: BigInt!
+  txnHash: Bytes!
+  blockHash: Bytes!
+  time: BigInt!
+  txId: BigInt!
+  tokenId: BigInt!
+  toChain: BigInt!
+  user: Bytes!
+  amount: BigInt!
+}
+
+type ClaimEntity @entity {
+  id: ID!
+  blockNo: BigInt!
+  txnHash: Bytes!
+  blockHash: Bytes!
+  time: BigInt!
+  user: Bytes!
+  txId: BigInt!
+  fromChain: BigInt!
 }
