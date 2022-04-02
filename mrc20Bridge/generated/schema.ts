@@ -127,12 +127,12 @@ export class DepositEntity extends Entity {
   }
 
   get amount():BigInt{
-    let value = this.get("nftIds");
+    let value = this.get("amount");
     return value!.toBigInt();
   }
 
   set amount(value: BigInt) {
-    this.set("nftIds", Value.fromBigInt(value));
+    this.set("amount", Value.fromBigInt(value));
   }
 }
 
