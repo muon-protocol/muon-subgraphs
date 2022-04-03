@@ -6,19 +6,11 @@ type DepositEntity @entity {
   time: BigInt!
   txId: BigInt!
   tokenId: BigInt!
+  fromChain: BigInt!
   toChain: BigInt!
   user: Bytes!
   amount: BigInt!
   tokenAddress: Bytes!
-}
-
-type ClaimEntity @entity {
-  id: ID!
-  blockNo: BigInt!
-  txHash: Bytes!
-  blockHash: Bytes!
-  time: BigInt!
-  user: Bytes!
-  txId: BigInt!
-  fromChain: BigInt!
+  deposited: Boolean!
+  claimed: Boolean!
 }

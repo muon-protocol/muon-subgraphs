@@ -22,10 +22,13 @@ export class DepositEntity extends Entity {
     this.set("time", Value.fromBigInt(BigInt.zero()));
     this.set("txId", Value.fromBigInt(BigInt.zero()));
     this.set("tokenId", Value.fromBigInt(BigInt.zero()));
+    this.set("fromChain", Value.fromBigInt(BigInt.zero()));
     this.set("toChain", Value.fromBigInt(BigInt.zero()));
     this.set("user", Value.fromBytes(Bytes.empty()));
     this.set("amount", Value.fromBigInt(BigInt.zero()));
     this.set("tokenAddress", Value.fromBytes(Bytes.empty()));
+    this.set("deposited", Value.fromBoolean(false));
+    this.set("claimed", Value.fromBoolean(false));
   }
 
   save(): void {
@@ -108,6 +111,15 @@ export class DepositEntity extends Entity {
     this.set("tokenId", Value.fromBigInt(value));
   }
 
+  get fromChain(): BigInt {
+    let value = this.get("fromChain");
+    return value!.toBigInt();
+  }
+
+  set fromChain(value: BigInt) {
+    this.set("fromChain", Value.fromBigInt(value));
+  }
+
   get toChain(): BigInt {
     let value = this.get("toChain");
     return value!.toBigInt();
@@ -143,108 +155,22 @@ export class DepositEntity extends Entity {
   set tokenAddress(value: Bytes) {
     this.set("tokenAddress", Value.fromBytes(value));
   }
-}
 
-export class ClaimEntity extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("blockNo", Value.fromBigInt(BigInt.zero()));
-    this.set("txHash", Value.fromBytes(Bytes.empty()));
-    this.set("blockHash", Value.fromBytes(Bytes.empty()));
-    this.set("time", Value.fromBigInt(BigInt.zero()));
-    this.set("user", Value.fromBytes(Bytes.empty()));
-    this.set("txId", Value.fromBigInt(BigInt.zero()));
-    this.set("fromChain", Value.fromBigInt(BigInt.zero()));
+  get deposited(): boolean {
+    let value = this.get("deposited");
+    return value!.toBoolean();
   }
 
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save ClaimEntity entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save ClaimEntity entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("ClaimEntity", id.toString(), this);
-    }
+  set deposited(value: boolean) {
+    this.set("deposited", Value.fromBoolean(value));
   }
 
-  static load(id: string): ClaimEntity | null {
-    return changetype<ClaimEntity | null>(store.get("ClaimEntity", id));
+  get claimed(): boolean {
+    let value = this.get("claimed");
+    return value!.toBoolean();
   }
 
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get blockNo(): BigInt {
-    let value = this.get("blockNo");
-    return value!.toBigInt();
-  }
-
-  set blockNo(value: BigInt) {
-    this.set("blockNo", Value.fromBigInt(value));
-  }
-
-  get txHash(): Bytes {
-    let value = this.get("txHash");
-    return value!.toBytes();
-  }
-
-  set txHash(value: Bytes) {
-    this.set("txHash", Value.fromBytes(value));
-  }
-
-  get blockHash(): Bytes {
-    let value = this.get("blockHash");
-    return value!.toBytes();
-  }
-
-  set blockHash(value: Bytes) {
-    this.set("blockHash", Value.fromBytes(value));
-  }
-
-  get time(): BigInt {
-    let value = this.get("time");
-    return value!.toBigInt();
-  }
-
-  set time(value: BigInt) {
-    this.set("time", Value.fromBigInt(value));
-  }
-
-  get user(): Bytes {
-    let value = this.get("user");
-    return value!.toBytes();
-  }
-
-  set user(value: Bytes) {
-    this.set("user", Value.fromBytes(value));
-  }
-
-  get txId(): BigInt {
-    let value = this.get("txId");
-    return value!.toBigInt();
-  }
-
-  set txId(value: BigInt) {
-    this.set("txId", Value.fromBigInt(value));
-  }
-
-  get fromChain(): BigInt {
-    let value = this.get("fromChain");
-    return value!.toBigInt();
-  }
-
-  set fromChain(value: BigInt) {
-    this.set("fromChain", Value.fromBigInt(value));
+  set claimed(value: boolean) {
+    this.set("claimed", Value.fromBoolean(value));
   }
 }

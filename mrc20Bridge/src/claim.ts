@@ -1,12 +1,12 @@
 import { BigInt, Address, ethereum, Bytes } from '@graphprotocol/graph-ts'
+import { DepositEntity } from '../generated/schema'
 
-import {  ClaimEntity } from "../generated/schema"
 
 
 export function setClaim(id:string,block:ethereum.Block,txHash:Bytes,txId:BigInt,user:Address,fromChain:BigInt):void{
-    let entity = ClaimEntity.load(id)
+    let entity = DepositEntity.load(id)
     if (entity == null) {
-      entity = new ClaimEntity(id)
+      entity = new DepositEntity(id)
     }
     entity.blockNo = block.number
     entity.txHash = txHash
@@ -15,5 +15,7 @@ export function setClaim(id:string,block:ethereum.Block,txHash:Bytes,txId:BigInt
     entity.user = user
     entity.txId = txId
     entity.fromChain = fromChain
+    entity.deposited = false
+    entity.claimed = true
     entity.save()
 }

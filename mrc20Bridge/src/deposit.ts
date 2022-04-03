@@ -28,6 +28,8 @@ export function setDeposit(id:string,block:ethereum.Block,txHash:Bytes,txId:BigI
       entity.user = tx.value.value5
       entity.amount = tx.value.value2
       entity.tokenAddress = tokenAddress.value
+      entity.deposited = true
+      entity.claimed = false
     } else {
       log.info("GetTx reverted", [])
     }
