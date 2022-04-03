@@ -8,8 +8,7 @@ import {
   store,
   Bytes,
   BigInt,
-  BigDecimal,
-  Address
+  BigDecimal
 } from "@graphprotocol/graph-ts";
 
 export class DepositEntity extends Entity {
@@ -26,6 +25,7 @@ export class DepositEntity extends Entity {
     this.set("toChain", Value.fromBigInt(BigInt.zero()));
     this.set("user", Value.fromBytes(Bytes.empty()));
     this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("tokenAddress", Value.fromBytes(Bytes.empty()));
   }
 
   save(): void {
@@ -41,10 +41,10 @@ export class DepositEntity extends Entity {
     }
   }
 
-  
   static load(id: string): DepositEntity | null {
     return changetype<DepositEntity | null>(store.get("DepositEntity", id));
   }
+
   get id(): string {
     let value = this.get("id");
     return value!.toString();
@@ -64,12 +64,12 @@ export class DepositEntity extends Entity {
   }
 
   get txHash(): Bytes {
-    let value = this.get("txnHash");
+    let value = this.get("txHash");
     return value!.toBytes();
   }
 
   set txHash(value: Bytes) {
-    this.set("txnHash", Value.fromBytes(value));
+    this.set("txHash", Value.fromBytes(value));
   }
 
   get blockHash(): Bytes {
@@ -117,22 +117,31 @@ export class DepositEntity extends Entity {
     this.set("toChain", Value.fromBigInt(value));
   }
 
-  get user(): Address {
+  get user(): Bytes {
     let value = this.get("user");
     return value!.toBytes();
   }
 
-  set user(value: Address) {
+  set user(value: Bytes) {
     this.set("user", Value.fromBytes(value));
   }
 
-  get amount():BigInt{
+  get amount(): BigInt {
     let value = this.get("amount");
     return value!.toBigInt();
   }
 
   set amount(value: BigInt) {
     this.set("amount", Value.fromBigInt(value));
+  }
+
+  get tokenAddress(): Bytes {
+    let value = this.get("tokenAddress");
+    return value!.toBytes();
+  }
+
+  set tokenAddress(value: Bytes) {
+    this.set("tokenAddress", Value.fromBytes(value));
   }
 }
 
@@ -186,12 +195,12 @@ export class ClaimEntity extends Entity {
   }
 
   get txHash(): Bytes {
-    let value = this.get("txnHash");
+    let value = this.get("txHash");
     return value!.toBytes();
   }
 
   set txHash(value: Bytes) {
-    this.set("txnHash", Value.fromBytes(value));
+    this.set("txHash", Value.fromBytes(value));
   }
 
   get blockHash(): Bytes {

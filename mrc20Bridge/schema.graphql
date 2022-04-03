@@ -1,7 +1,7 @@
 type DepositEntity @entity {
   id: ID!
   blockNo: BigInt!
-  txnHash: Bytes!
+  txHash: Bytes!
   blockHash: Bytes!
   time: BigInt!
   txId: BigInt!
@@ -9,12 +9,13 @@ type DepositEntity @entity {
   toChain: BigInt!
   user: Bytes!
   amount: BigInt!
+  tokenAddress: Bytes!
 }
 
 type ClaimEntity @entity {
   id: ID!
   blockNo: BigInt!
-  txnHash: Bytes!
+  txHash: Bytes!
   blockHash: Bytes!
   time: BigInt!
   user: Bytes!

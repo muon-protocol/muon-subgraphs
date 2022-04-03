@@ -21,10 +21,13 @@ export function setDeposit(id:string,block:ethereum.Block,txHash:Bytes,txId:BigI
     let tx = contract.try_getTx(txId)
     if(!tx.reverted)
     {
+      let tokenAddress = contract.try_tokens(tx.value.value1)
+
       entity.tokenId = tx.value.value1
       entity.toChain = tx.value.value4
       entity.user = tx.value.value5
       entity.amount = tx.value.value2
+      entity.tokenAddress = tokenAddress.value
     } else {
       log.info("GetTx reverted", [])
     }
