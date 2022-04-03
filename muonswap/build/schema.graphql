@@ -1,0 +1,15 @@
+type TxEntity @entity {
+  id: ID!
+  txId: BigInt!
+  amount0: BigInt!
+  amount1: BigInt!
+  amount0Min: BigInt!
+  amount1Min: BigInt!
+  totalSupply: BigInt!
+  addr: Bytes!
+  deposit_tx: Bytes
+  claim_tx: Bytes
+  time: BigInt!
+  claimed: Boolean!
+  _type: Int!
+}

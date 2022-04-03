@@ -1,0 +1,42 @@
+specVersion: 0.0.3
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MuonSwapPair
+    network: ropsten
+    source:
+      address: "0x5C7d447E3a26F217CC701665B77009D1a7dc483E"
+      abi: MuonSwapPair
+      startBlock: 12037383
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - Claim
+        - Deposit
+        - RoleAdminChanged
+        - RoleGranted
+        - RoleRevoked
+        - Transfer
+      abis:
+        - name: MuonSwapPair
+          file: ./abis/MuonSwapPair.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: Claim(uint256)
+          handler: handleClaim
+        - event: Deposit(uint256)
+          handler: handleDeposit
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
