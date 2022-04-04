@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MRC20Bridge
-    network: ropsten
+    network: {{ network }}
     source:
-      address: '0xb8e84d2F8e3EbA1d2Eb512117C8Dd398647C4C7d'
+      address: '{{ address }}'
       abi: MRC20Bridge
-      startBlock: 12161422
+      startBlock: {{ startBlock }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

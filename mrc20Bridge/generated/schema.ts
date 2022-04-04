@@ -24,6 +24,7 @@ export class BridgeEntity extends Entity {
     this.set("tokenId", Value.fromBigInt(BigInt.zero()));
     this.set("fromChain", Value.fromBigInt(BigInt.zero()));
     this.set("toChain", Value.fromBigInt(BigInt.zero()));
+    this.set("claimedChain", Value.fromBigInt(BigInt.zero()));
     this.set("user", Value.fromBytes(Bytes.empty()));
     this.set("amount", Value.fromBigInt(BigInt.zero()));
     this.set("tokenAddress", Value.fromBytes(Bytes.empty()));
@@ -127,6 +128,15 @@ export class BridgeEntity extends Entity {
 
   set toChain(value: BigInt) {
     this.set("toChain", Value.fromBigInt(value));
+  }
+
+  get claimedChain(): BigInt {
+    let value = this.get("claimedChain");
+    return value!.toBigInt();
+  }
+
+  set claimedChain(value: BigInt) {
+    this.set("claimedChain", Value.fromBigInt(value));
   }
 
   get user(): Bytes {
