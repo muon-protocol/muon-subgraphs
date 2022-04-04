@@ -14,13 +14,13 @@ export function handleAddToken(event: AddToken): void {
 }
 
 export function handleClaim(event: Claim): void {
-  let id = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  setClaim(id,event.block,event.transaction.hash,event.params.txId,event.params.user,event.params.fromChain)
+  
+  setClaim(event.block,event.transaction.hash,event.params.txId,event.params.user,event.params.fromChain)
 }
 
 export function handleDeposit(event: Deposit): void {
-  let id = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  setDeposit(id,event.block,event.transaction.hash,event.params.txId,event.address)
+  
+  setDeposit(event.block,event.transaction.hash,event.params.txId,event.address)
 
 }
 

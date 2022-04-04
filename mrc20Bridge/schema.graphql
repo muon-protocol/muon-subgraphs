@@ -1,4 +1,4 @@
-type DepositEntity @entity {
+type BridgeEntity @entity {
   id: ID!
   blockNo: BigInt!
   txHash: Bytes!

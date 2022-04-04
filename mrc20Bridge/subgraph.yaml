@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MRC20Bridge
-    network: ropsten
+    network: chapel
     source:
-      address: '0x4952eC5718f0E3cEDffb23C964849476B92c2e76'
+      address: '0x0403B501B5fd5A5f90647B52Ab34453FC18398f4'
       abi: MRC20Bridge
-      startBlock: 12151195
+      startBlock: 18125246
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
