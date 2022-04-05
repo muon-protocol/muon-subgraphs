@@ -6,9 +6,9 @@ dataSources:
     name: MRC1155Bridge
     network: mumbai
     source:
-      address: "0x18cDE068548FeFA514d01BE03AD3186DBF7dcE2d"
+      address: "0xb152A43868Ce4a5221202B27Ba734204253F39f8"
       abi: MRC1155Bridge
-      startBlock: 25741595
+      startBlock: 25808247
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

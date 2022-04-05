@@ -303,29 +303,6 @@ export class MRC1155Bridge extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  _ERC1155_RECEIVED(): Bytes {
-    let result = super.call(
-      "_ERC1155_RECEIVED",
-      "_ERC1155_RECEIVED():(bytes4)",
-      []
-    );
-
-    return result[0].toBytes();
-  }
-
-  try__ERC1155_RECEIVED(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "_ERC1155_RECEIVED",
-      "_ERC1155_RECEIVED():(bytes4)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
   bridgeFee(): BigInt {
     let result = super.call("bridgeFee", "bridgeFee():(uint256)", []);
 
@@ -914,6 +891,14 @@ export class ClaimCall__Inputs {
   get txParams(): Array<BigInt> {
     return this._call.inputValues[2].value.toBigIntArray();
   }
+
+  get _reqId(): Bytes {
+    return this._call.inputValues[3].value.toBytes();
+  }
+
+  get _sigs(): Array<ClaimCall_sigsStruct> {
+    return this._call.inputValues[4].value.toTupleArray<ClaimCall_sigsStruct>();
+  }
 }
 
 export class ClaimCall__Outputs {
@@ -921,6 +906,20 @@ export class ClaimCall__Outputs {
 
   constructor(call: ClaimCall) {
     this._call = call;
+  }
+}
+
+export class ClaimCall_sigsStruct extends ethereum.Tuple {
+  get signature(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get owner(): Address {
+    return this[1].toAddress();
+  }
+
+  get nonce(): Address {
+    return this[2].toAddress();
   }
 }
 
@@ -956,6 +955,16 @@ export class ClaimForCall__Inputs {
   get txParams(): Array<BigInt> {
     return this._call.inputValues[3].value.toBigIntArray();
   }
+
+  get _reqId(): Bytes {
+    return this._call.inputValues[4].value.toBytes();
+  }
+
+  get _sigs(): Array<ClaimForCall_sigsStruct> {
+    return this._call.inputValues[5].value.toTupleArray<
+      ClaimForCall_sigsStruct
+    >();
+  }
 }
 
 export class ClaimForCall__Outputs {
@@ -963,6 +972,20 @@ export class ClaimForCall__Outputs {
 
   constructor(call: ClaimForCall) {
     this._call = call;
+  }
+}
+
+export class ClaimForCall_sigsStruct extends ethereum.Tuple {
+  get signature(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get owner(): Address {
+    return this[1].toAddress();
+  }
+
+  get nonce(): Address {
+    return this[2].toAddress();
   }
 }
 

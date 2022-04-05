@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MRC1155Bridge
-    network: mumbai
+    network: rinkeby
     source:
-      address: '0x18cDE068548FeFA514d01BE03AD3186DBF7dcE2d'
+      address: '0x3314c8e65385F4a22186e2A43cC9D2180B5074CA'
       abi: MRC1155Bridge
-      startBlock: 25741595
+      startBlock: 10450332
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
