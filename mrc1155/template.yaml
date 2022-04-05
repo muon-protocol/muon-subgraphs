@@ -1,0 +1,27 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MRC1155Bridge
+    network: {{ network }}
+    source:
+      address: '{{ address }}'
+      abi: MRC1155Bridge
+      startBlock: {{ startBlock }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - ClaimEntity
+        - DepositEntity
+      abis:
+        - name: MRC1155Bridge
+          file: ./abis/MRC1155Bridge.json
+      eventHandlers:
+        - event: Claim(indexed address,uint256,uint256)
+          handler: handleClaim
+        - event: Deposit(uint256)
+          handler: handleDeposit
+      file: ./src/mapping.ts
