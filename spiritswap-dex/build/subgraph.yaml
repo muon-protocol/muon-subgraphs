@@ -1,0 +1,54 @@
+specVersion: 0.0.2
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: SpiritFactory
+    network: fantom
+    source:
+      address: "0xEF45d134b73241eDa7703fa787148D9C9F4950b0"
+      abi: Factory
+      startBlock: 4250094
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PairCreated
+      abis:
+        - name: Factory
+          file: SpiritFactory/abis/factory.json
+        - name: ERC20
+          file: SpiritFactory/abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: SpiritFactory/abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: SpiritFactory/abis/ERC20NameBytes.json
+      eventHandlers:
+        - event: PairCreated(indexed address,indexed address,address,uint256)
+          handler: handlePairCreated
+      file: SpiritFactory/SpiritFactory.wasm
+templates:
+  - kind: ethereum/contract
+    name: Pair
+    network: fantom
+    source:
+      abi: Pair
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: SpiritFactory/SpiritFactory.wasm
+      entities:
+        - Pair
+        - Token
+      abis:
+        - name: Pair
+          file: Pair/abis/pair.json
+        - name: Factory
+          file: Pair/abis/factory.json
+      eventHandlers:
+        - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
+          handler: handleSwap
+        - event: Sync(uint112,uint112)
+          handler: handleSync
