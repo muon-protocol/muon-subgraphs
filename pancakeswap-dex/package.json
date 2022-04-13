@@ -1,0 +1,15 @@
+{
+  "name": "PancakeSwap",
+  "description": "PancakeSwap Subgraph",
+  "version": "1.0.0",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "codegen": "./node_modules/.bin/graph codegen subgraph.yaml",
+    "build": "./node_modules/.bin/graph build subgraph.yaml",
+    "deploy": "./node_modules/.bin/graph deploy --product hosted-service --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ ShayanShiravani/Pancakeswap subgraph.yaml"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.21.0",
+    "@graphprotocol/graph-ts": "^0.20.0"
+  }
+}
