@@ -1,0 +1,11 @@
+{
+  "output": "generated/mrc1155.",
+  "chain": "rinkeby",
+  "datasources": [
+    { 
+      "address": "0x27Cb975fb7c7182E44667ef8593E9AA83311a55f", 
+      "startBlock": 10456152, 
+      "module": [ "erc1155" ]
+    }
+  ]
+}
