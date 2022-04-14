@@ -1,0 +1,11 @@
+{
+  "output": "generated/fear-erc1155.",
+  "chain": "rinkeby",
+  "datasources": [
+    { 
+      "address": "0xDD8ceAD5C49bEbf00399a2DFdb7e093FCf32f2E6", 
+      "startBlock": 10498069, 
+      "module": [ "erc1155" ]
+    }
+  ]
+}
