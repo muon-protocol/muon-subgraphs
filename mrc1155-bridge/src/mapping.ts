@@ -23,6 +23,7 @@ export function handleClaim(event: Claim): void {
 }
 
 export function handleDeposit(event: Deposit): void {
+  log.info("Deposit event", [])
   let id = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let entity = DepositEntity.load(id)
   if (entity == null) {
@@ -34,6 +35,7 @@ export function handleDeposit(event: Deposit): void {
   entity.time = event.block.timestamp
   entity.txId = event.params.txId
   let contract = MRC1155Bridge.bind(event.address)
+  log.info("txId: {}", [event.params.txId.toString()])
   let tx = contract.try_getTx(event.params.txId)
   if(!tx.reverted)
   {
