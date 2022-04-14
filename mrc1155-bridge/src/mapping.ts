@@ -7,6 +7,7 @@ import {
 import { ClaimEntity, DepositEntity } from "../generated/schema"
 
 export function handleClaim(event: Claim): void {
+  log.info("Claim event", [])
   let id = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let entity = ClaimEntity.load(id)
   if (entity == null) {
@@ -45,7 +46,7 @@ export function handleDeposit(event: Deposit): void {
     entity.itemIds = tx.value.value6
     entity.amounts = tx.value.value7
   } else {
-    log.info("GetTx reverted", [])
+    log.error("GetTx {} reverted", [event.params.txId.toString()])
   }
   entity.save()
 }
