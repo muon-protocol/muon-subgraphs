@@ -11,38 +11,43 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class DepositEntity extends Entity {
+export class BridgeEntity extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
 
     this.set("blockNo", Value.fromBigInt(BigInt.zero()));
-    this.set("txnHash", Value.fromBytes(Bytes.empty()));
+    this.set("txHash", Value.fromBytes(Bytes.empty()));
     this.set("blockHash", Value.fromBytes(Bytes.empty()));
     this.set("time", Value.fromBigInt(BigInt.zero()));
     this.set("txId", Value.fromBigInt(BigInt.zero()));
     this.set("tokenId", Value.fromBigInt(BigInt.zero()));
+    this.set("fromChain", Value.fromBigInt(BigInt.zero()));
     this.set("toChain", Value.fromBigInt(BigInt.zero()));
+    this.set("claimedChain", Value.fromBigInt(BigInt.zero()));
     this.set("user", Value.fromBytes(Bytes.empty()));
     this.set("itemIds", Value.fromBigIntArray(new Array(0)));
     this.set("amounts", Value.fromBigIntArray(new Array(0)));
+    this.set("tokenAddress", Value.fromBytes(Bytes.empty()));
+    this.set("deposited", Value.fromBoolean(false));
+    this.set("claimed", Value.fromBoolean(false));
   }
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save DepositEntity entity without an ID");
+    assert(id != null, "Cannot save BridgeEntity entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save DepositEntity entity with non-string ID. " +
+        "Cannot save BridgeEntity entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("DepositEntity", id.toString(), this);
+      store.set("BridgeEntity", id.toString(), this);
     }
   }
 
-  static load(id: string): DepositEntity | null {
-    return changetype<DepositEntity | null>(store.get("DepositEntity", id));
+  static load(id: string): BridgeEntity | null {
+    return changetype<BridgeEntity | null>(store.get("BridgeEntity", id));
   }
 
   get id(): string {
@@ -63,13 +68,13 @@ export class DepositEntity extends Entity {
     this.set("blockNo", Value.fromBigInt(value));
   }
 
-  get txnHash(): Bytes {
-    let value = this.get("txnHash");
+  get txHash(): Bytes {
+    let value = this.get("txHash");
     return value!.toBytes();
   }
 
-  set txnHash(value: Bytes) {
-    this.set("txnHash", Value.fromBytes(value));
+  set txHash(value: Bytes) {
+    this.set("txHash", Value.fromBytes(value));
   }
 
   get blockHash(): Bytes {
@@ -108,6 +113,15 @@ export class DepositEntity extends Entity {
     this.set("tokenId", Value.fromBigInt(value));
   }
 
+  get fromChain(): BigInt {
+    let value = this.get("fromChain");
+    return value!.toBigInt();
+  }
+
+  set fromChain(value: BigInt) {
+    this.set("fromChain", Value.fromBigInt(value));
+  }
+
   get toChain(): BigInt {
     let value = this.get("toChain");
     return value!.toBigInt();
@@ -115,6 +129,15 @@ export class DepositEntity extends Entity {
 
   set toChain(value: BigInt) {
     this.set("toChain", Value.fromBigInt(value));
+  }
+
+  get claimedChain(): BigInt {
+    let value = this.get("claimedChain");
+    return value!.toBigInt();
+  }
+
+  set claimedChain(value: BigInt) {
+    this.set("claimedChain", Value.fromBigInt(value));
   }
 
   get user(): Bytes {
@@ -143,108 +166,31 @@ export class DepositEntity extends Entity {
   set amounts(value: Array<BigInt>) {
     this.set("amounts", Value.fromBigIntArray(value));
   }
-}
 
-export class ClaimEntity extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("blockNo", Value.fromBigInt(BigInt.zero()));
-    this.set("txnHash", Value.fromBytes(Bytes.empty()));
-    this.set("blockHash", Value.fromBytes(Bytes.empty()));
-    this.set("time", Value.fromBigInt(BigInt.zero()));
-    this.set("user", Value.fromBytes(Bytes.empty()));
-    this.set("txId", Value.fromBigInt(BigInt.zero()));
-    this.set("fromChain", Value.fromBigInt(BigInt.zero()));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save ClaimEntity entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save ClaimEntity entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("ClaimEntity", id.toString(), this);
-    }
-  }
-
-  static load(id: string): ClaimEntity | null {
-    return changetype<ClaimEntity | null>(store.get("ClaimEntity", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get blockNo(): BigInt {
-    let value = this.get("blockNo");
-    return value!.toBigInt();
-  }
-
-  set blockNo(value: BigInt) {
-    this.set("blockNo", Value.fromBigInt(value));
-  }
-
-  get txnHash(): Bytes {
-    let value = this.get("txnHash");
+  get tokenAddress(): Bytes {
+    let value = this.get("tokenAddress");
     return value!.toBytes();
   }
 
-  set txnHash(value: Bytes) {
-    this.set("txnHash", Value.fromBytes(value));
+  set tokenAddress(value: Bytes) {
+    this.set("tokenAddress", Value.fromBytes(value));
   }
 
-  get blockHash(): Bytes {
-    let value = this.get("blockHash");
-    return value!.toBytes();
+  get deposited(): boolean {
+    let value = this.get("deposited");
+    return value!.toBoolean();
   }
 
-  set blockHash(value: Bytes) {
-    this.set("blockHash", Value.fromBytes(value));
+  set deposited(value: boolean) {
+    this.set("deposited", Value.fromBoolean(value));
   }
 
-  get time(): BigInt {
-    let value = this.get("time");
-    return value!.toBigInt();
+  get claimed(): boolean {
+    let value = this.get("claimed");
+    return value!.toBoolean();
   }
 
-  set time(value: BigInt) {
-    this.set("time", Value.fromBigInt(value));
-  }
-
-  get user(): Bytes {
-    let value = this.get("user");
-    return value!.toBytes();
-  }
-
-  set user(value: Bytes) {
-    this.set("user", Value.fromBytes(value));
-  }
-
-  get txId(): BigInt {
-    let value = this.get("txId");
-    return value!.toBigInt();
-  }
-
-  set txId(value: BigInt) {
-    this.set("txId", Value.fromBigInt(value));
-  }
-
-  get fromChain(): BigInt {
-    let value = this.get("fromChain");
-    return value!.toBigInt();
-  }
-
-  set fromChain(value: BigInt) {
-    this.set("fromChain", Value.fromBigInt(value));
+  set claimed(value: boolean) {
+    this.set("claimed", Value.fromBoolean(value));
   }
 }

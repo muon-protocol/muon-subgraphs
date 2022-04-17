@@ -4,12 +4,12 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "create-local": "graph create --node http://localhost:8020/ ShayanShiravani/mrc1155-bridge-rinkeby",
-    "remove-local": "graph remove --node http://localhost:8020/ ShayanShiravani/mrc1155-bridge-rinkeby",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 ShayanShiravani/mrc1155-bridge-rinkeby",
-    "deploy:rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ ShayanShiravani/mrc1155-bridge-rinkeby",
-    "deploy:mumbai": "graph deploy --node https://api.thegraph.com/deploy/ ShayanShiravani/mrc1155-bridge-mumbai",
-    "deploy:bsctest": "graph deploy --node https://api.thegraph.com/deploy/ ShayanShiravani/mrc1155-bridge-bnbt",
+    "create-local": "graph create --node http://localhost:8020/ znamazi/mrc1155-bridge-rinkeby",
+    "remove-local": "graph remove --node http://localhost:8020/ znamazi/mrc1155-bridge-rinkeby",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 znamazi/mrc1155-bridge-rinkeby",
+    "deploy:rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ znamazi/mrc1155-bridge-rinkeby",
+    "deploy:mumbai": "graph deploy --node https://api.thegraph.com/deploy/ znamazi/mrc1155-bridge-mumbai",
+    "deploy:bsctest": "graph deploy --node https://api.thegraph.com/deploy/ znamazi/mrc1155-bridge-bnbt",
     "prepare:rinkeby": "mustache config/rinkeby.json template.yaml > subgraph.yaml",
     "prepare:mumbai": "mustache config/mumbai.json template.yaml > subgraph.yaml",
     "prepare:bsctest": "mustache config/bsctest.json template.yaml > subgraph.yaml"

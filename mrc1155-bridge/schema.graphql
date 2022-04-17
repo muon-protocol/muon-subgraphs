@@ -1,24 +1,18 @@
-type DepositEntity @entity {
+type BridgeEntity @entity {
   id: ID!
   blockNo: BigInt!
-  txnHash: Bytes!
+  txHash: Bytes!
   blockHash: Bytes!
   time: BigInt!
   txId: BigInt!
   tokenId: BigInt!
+  fromChain: BigInt!
   toChain: BigInt!
+  claimedChain: BigInt!
   user: Bytes!
   itemIds: [BigInt!]!
   amounts: [BigInt!]!
-}
-
-type ClaimEntity @entity {
-  id: ID!
-  blockNo: BigInt!
-  txnHash: Bytes!
-  blockHash: Bytes!
-  time: BigInt!
-  user: Bytes!
-  txId: BigInt!
-  fromChain: BigInt!
+  tokenAddress: Bytes!
+  deposited: Boolean!
+  claimed: Boolean!
 }
