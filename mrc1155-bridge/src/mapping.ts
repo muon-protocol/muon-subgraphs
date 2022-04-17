@@ -1,6 +1,4 @@
-import { BigInt, log } from "@graphprotocol/graph-ts"
 import {
-  MRC1155Bridge,
   Claim,
   Deposit
 } from "../generated/MRC1155Bridge/MRC1155Bridge"

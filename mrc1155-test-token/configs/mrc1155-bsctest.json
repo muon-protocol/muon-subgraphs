@@ -1,0 +1,11 @@
+{
+  "output": "generated/mrc1155.",
+  "chain": "chapel",
+  "datasources": [
+    { 
+      "address": "0x3833a32f974846506235699bbB8bc33368eD21FE", 
+      "startBlock": 18208943, 
+      "module": [ "erc1155" ]
+    }
+  ]
+}

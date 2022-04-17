@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.22.0",
+    "@openzeppelin/subgraphs": "^0.1.7-1"
+  }
+}
