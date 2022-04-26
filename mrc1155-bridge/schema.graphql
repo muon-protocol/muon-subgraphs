@@ -16,3 +16,10 @@ type BridgeEntity @entity {
   deposited: Boolean!
   claimed: Boolean!
 }
+
+type AddToken @entity {
+  id: ID! # token_address
+  tokenId: BigInt!
+  mintable: Boolean!
+  blockNumber: BigInt!
+}

@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MRC1155Bridge
-    network: mumbai
+    network: rinkeby
     source:
-      address: '0xb152A43868Ce4a5221202B27Ba734204253F39f8'
+      address: '0x3314c8e65385F4a22186e2A43cC9D2180B5074CA'
       abi: MRC1155Bridge
-      startBlock: 25808247
+      startBlock: 10450332
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -16,6 +16,7 @@ dataSources:
       entities:
         - ClaimEntity
         - DepositEntity
+        - AddToken
       abis:
         - name: MRC1155Bridge
           file: ./abis/MRC1155Bridge.json
@@ -24,4 +25,6 @@ dataSources:
           handler: handleClaim
         - event: Deposit(uint256)
           handler: handleDeposit
+        - event: AddToken(address,uint256,bool)
+          handler: handleAddToken
       file: ./src/mapping.ts
