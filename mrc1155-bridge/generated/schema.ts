@@ -199,6 +199,7 @@ export class AddToken extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("tokenId", Value.fromBigInt(BigInt.zero()));
+    this.set("tokenAddress", Value.fromBytes(Bytes.empty()));
     this.set("blockNumber", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -235,6 +236,15 @@ export class AddToken extends Entity {
 
   set tokenId(value: BigInt) {
     this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get tokenAddress(): Bytes {
+    let value = this.get("tokenAddress");
+    return value!.toBytes();
+  }
+
+  set tokenAddress(value: Bytes) {
+    this.set("tokenAddress", Value.fromBytes(value));
   }
 
   get mintable(): boolean {

@@ -22,7 +22,7 @@ export function handleDeposit(event: Deposit): void {
 export function handleAddToken(event: AddToken): void {
 
   setNewToken(
-    event.params.addr.toHex(),
+    event.params.addr,
     event.params.tokenId,
     event.params.mintable,
     event.block.number
