@@ -29,8 +29,6 @@ export class BridgeEntity extends Entity {
     this.set("itemIds", Value.fromBigIntArray(new Array(0)));
     this.set("amounts", Value.fromBigIntArray(new Array(0)));
     this.set("tokenAddress", Value.fromBytes(Bytes.empty()));
-    this.set("deposited", Value.fromBoolean(false));
-    this.set("claimed", Value.fromBoolean(false));
   }
 
   save(): void {
@@ -192,5 +190,78 @@ export class BridgeEntity extends Entity {
 
   set claimed(value: boolean) {
     this.set("claimed", Value.fromBoolean(value));
+  }
+}
+
+export class AddToken extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("tokenId", Value.fromBigInt(BigInt.zero()));
+    this.set("tokenAddress", Value.fromBytes(Bytes.empty()));
+    this.set("blockNumber", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save AddToken entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save AddToken entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("AddToken", id.toString(), this);
+    }
+  }
+
+  static load(id: string): AddToken | null {
+    return changetype<AddToken | null>(store.get("AddToken", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    return value!.toBigInt();
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get tokenAddress(): Bytes {
+    let value = this.get("tokenAddress");
+    return value!.toBytes();
+  }
+
+  set tokenAddress(value: Bytes) {
+    this.set("tokenAddress", Value.fromBytes(value));
+  }
+
+  get mintable(): boolean {
+    let value = this.get("mintable");
+    return value!.toBoolean();
+  }
+
+  set mintable(value: boolean) {
+    this.set("mintable", Value.fromBoolean(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
   }
 }

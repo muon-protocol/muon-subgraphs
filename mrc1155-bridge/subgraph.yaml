@@ -16,6 +16,7 @@ dataSources:
       entities:
         - ClaimEntity
         - DepositEntity
+        - AddToken
       abis:
         - name: MRC1155Bridge
           file: ./abis/MRC1155Bridge.json
@@ -24,4 +25,6 @@ dataSources:
           handler: handleClaim
         - event: Deposit(uint256)
           handler: handleDeposit
+        - event: AddToken(address,uint256,bool)
+          handler: handleAddToken
       file: ./src/mapping.ts

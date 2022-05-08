@@ -1,9 +1,11 @@
 import {
   Claim,
-  Deposit
+  Deposit,
+  AddToken
 } from "../generated/MRC1155Bridge/MRC1155Bridge"
 import { setClaim } from "./claim"
 import { setDeposit } from "./deposit"
+import { setNewToken } from "./addToken"
 
 
 export function handleClaim(event: Claim): void {
@@ -17,4 +19,14 @@ export function handleDeposit(event: Deposit): void {
 
 }
 
+export function handleAddToken(event: AddToken): void {
+
+  setNewToken(
+    event.params.addr,
+    event.params.tokenId,
+    event.params.mintable,
+    event.block.number
+    )
+
+}
 
