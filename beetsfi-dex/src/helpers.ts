@@ -1,8 +1,7 @@
 import { Address, BigDecimal, BigInt, log } from "@graphprotocol/graph-ts"
 import { ERC20 } from "../generated/Vault/ERC20"
-import { ERC20SymbolBytes } from "../generated/Vault/ERC20SymbolBytes"
-import { ERC20NameBytes } from "../generated/Vault/ERC20NameBytes"
-import { ONE_BI, ZERO_BI } from "./constants"
+import { ONE_BI, PoolType, ZERO_BI } from "./constants"
+import { Pool, PoolToken, Token } from "../generated/schema"
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let bd = BigDecimal.fromString('1')
@@ -23,64 +22,56 @@ export function convertTokenToDecimal(tokenAmount: BigInt, exchangeDecimals: Big
   return tokenAmount.toBigDecimal().div(exponentToBigDecimal(exchangeDecimals))
 }
 
-export function fetchTokenSymbol(tokenAddress: Address): string {
-  let contract = ERC20.bind(tokenAddress)
-  let contractSymbolBytes = ERC20SymbolBytes.bind(tokenAddress)
-
-  // try types string and bytes32 for symbol
-  let symbolValue = 'unknown'
-  let symbolResult = contract.try_symbol()
-  if (symbolResult.reverted) {
-    let symbolResultBytes = contractSymbolBytes.try_symbol()
-    if (!symbolResultBytes.reverted) {
-      // for broken pairs that have no symbol function exposed
-      if (!isNullEthValue(symbolResultBytes.value.toHexString())) {
-        symbolValue = symbolResultBytes.value.toString()
-      }
-    }
-  } else {
-    symbolValue = symbolResult.value
+export function getToken(tokenAddress: Address): Token {
+  let token = Token.load(tokenAddress.toHexString())
+  if (token == null) {
+    token = createToken(tokenAddress)
   }
-
-  return symbolValue
+  return token
 }
 
-export function fetchTokenName(tokenAddress: Address): string {
-  let contract = ERC20.bind(tokenAddress)
-  let contractNameBytes = ERC20NameBytes.bind(tokenAddress)
+export function createToken(tokenAddress: Address): Token {
+  let erc20token = ERC20.bind(tokenAddress)
+  let token = new Token(tokenAddress.toHexString())
+  let name = ''
+  let symbol = ''
+  let decimals = 0
 
-  // try types string and bytes32 for name
-  let nameValue = 'unknown'
-  let nameResult = contract.try_name()
-  if (nameResult.reverted) {
-    let nameResultBytes = contractNameBytes.try_name()
-    if (!nameResultBytes.reverted) {
-      // for broken exchanges that have no name function exposed
-      if (!isNullEthValue(nameResultBytes.value.toHexString())) {
-        nameValue = nameResultBytes.value.toString()
-      }
-    }
-  } else {
-    nameValue = nameResult.value
-  }
+  // attempt to retrieve erc20 values
+  let maybeName = erc20token.try_name()
+  let maybeSymbol = erc20token.try_symbol()
+  let maybeDecimals = erc20token.try_decimals()
 
-  return nameValue
+  if (!maybeName.reverted) name = maybeName.value
+  if (!maybeSymbol.reverted) symbol = maybeSymbol.value
+  if (!maybeDecimals.reverted) decimals = maybeDecimals.value
+
+  token.name = name
+  token.symbol = symbol
+  token.decimals = decimals
+  token.save()
+  return token
 }
 
-export function fetchTokenTotalSupply(tokenAddress: Address): BigInt|null {
-  let contract = ERC20.bind(tokenAddress)
-  let totalSupplyResult = contract.try_totalSupply()
-  if (!totalSupplyResult.reverted) {
-    return totalSupplyResult.value
-  }
-  return null
+export function scaleDown(num: BigInt, decimals: i32): BigDecimal {
+  return num.divDecimal(BigInt.fromI32(10).pow(u8(decimals)).toBigDecimal())
 }
 
-export function fetchTokenDecimals(tokenAddress: Address): BigInt|null {
-  let contract = ERC20.bind(tokenAddress)
-  let decimalResult = contract.try_decimals()
-  if (!decimalResult.reverted) {
-    return BigInt.fromI32(decimalResult.value)
-  }
-  return null
+export function loadPoolToken(poolId: string, tokenAddress: Address): PoolToken | null {
+  return PoolToken.load(getPoolTokenId(poolId, tokenAddress))
+}
+
+export function getPoolTokenId(poolId: string, tokenAddress: Address): string {
+  return poolId.concat('-').concat(tokenAddress.toHexString())
+}
+
+export function tokenToDecimal(amount: BigInt, decimals: i32): BigDecimal {
+  let scale = BigInt.fromI32(10)
+    .pow(decimals as u8)
+    .toBigDecimal();
+  return amount.toBigDecimal().div(scale);
+}
+
+export function isVariableWeightPool(pool: Pool): boolean {
+  return pool.poolType == PoolType.LiquidityBootstrapping || pool.poolType == PoolType.Investment;
 }

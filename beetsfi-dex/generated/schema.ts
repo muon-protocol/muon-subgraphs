@@ -15,8 +15,6 @@ export class Vault extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
-
-    this.set("totalSwapCount", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -44,15 +42,6 @@ export class Vault extends Entity {
   set id(value: string) {
     this.set("id", Value.fromString(value));
   }
-
-  get totalSwapCount(): BigInt {
-    let value = this.get("totalSwapCount");
-    return value!.toBigInt();
-  }
-
-  set totalSwapCount(value: BigInt) {
-    this.set("totalSwapCount", Value.fromBigInt(value));
-  }
 }
 
 export class Token extends Entity {
@@ -62,9 +51,7 @@ export class Token extends Entity {
 
     this.set("symbol", Value.fromString(""));
     this.set("name", Value.fromString(""));
-    this.set("decimals", Value.fromBigInt(BigInt.zero()));
-    this.set("totalSupply", Value.fromBigInt(BigInt.zero()));
-    this.set("totalLiquidity", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("decimals", Value.fromI32(0));
   }
 
   save(): void {
@@ -111,31 +98,13 @@ export class Token extends Entity {
     this.set("name", Value.fromString(value));
   }
 
-  get decimals(): BigInt {
+  get decimals(): i32 {
     let value = this.get("decimals");
-    return value!.toBigInt();
+    return value!.toI32();
   }
 
-  set decimals(value: BigInt) {
-    this.set("decimals", Value.fromBigInt(value));
-  }
-
-  get totalSupply(): BigInt {
-    let value = this.get("totalSupply");
-    return value!.toBigInt();
-  }
-
-  set totalSupply(value: BigInt) {
-    this.set("totalSupply", Value.fromBigInt(value));
-  }
-
-  get totalLiquidity(): BigDecimal {
-    let value = this.get("totalLiquidity");
-    return value!.toBigDecimal();
-  }
-
-  set totalLiquidity(value: BigDecimal) {
-    this.set("totalLiquidity", Value.fromBigDecimal(value));
+  set decimals(value: i32) {
+    this.set("decimals", Value.fromI32(value));
   }
 }
 
@@ -200,12 +169,15 @@ export class Swap extends Entity {
 
     this.set("transaction", Value.fromString(""));
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("poolId", Value.fromBytes(Bytes.empty()));
+    this.set("poolId", Value.fromString(""));
     this.set("from", Value.fromBytes(Bytes.empty()));
     this.set("tokenIn", Value.fromString(""));
     this.set("tokenOut", Value.fromString(""));
     this.set("tokenAmountIn", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("tokenAmountOut", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("balanceIn", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("balanceOut", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("poolTokenBalances", Value.fromBigDecimalArray(new Array(0)));
     this.set("logIndex", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -253,13 +225,13 @@ export class Swap extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 
-  get poolId(): Bytes {
+  get poolId(): string {
     let value = this.get("poolId");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set poolId(value: Bytes) {
-    this.set("poolId", Value.fromBytes(value));
+  set poolId(value: string) {
+    this.set("poolId", Value.fromString(value));
   }
 
   get from(): Bytes {
@@ -307,6 +279,33 @@ export class Swap extends Entity {
     this.set("tokenAmountOut", Value.fromBigDecimal(value));
   }
 
+  get balanceIn(): BigDecimal {
+    let value = this.get("balanceIn");
+    return value!.toBigDecimal();
+  }
+
+  set balanceIn(value: BigDecimal) {
+    this.set("balanceIn", Value.fromBigDecimal(value));
+  }
+
+  get balanceOut(): BigDecimal {
+    let value = this.get("balanceOut");
+    return value!.toBigDecimal();
+  }
+
+  set balanceOut(value: BigDecimal) {
+    this.set("balanceOut", Value.fromBigDecimal(value));
+  }
+
+  get poolTokenBalances(): Array<BigDecimal> {
+    let value = this.get("poolTokenBalances");
+    return value!.toBigDecimalArray();
+  }
+
+  set poolTokenBalances(value: Array<BigDecimal>) {
+    this.set("poolTokenBalances", Value.fromBigDecimalArray(value));
+  }
+
   get logIndex(): BigInt {
     let value = this.get("logIndex");
     return value!.toBigInt();
@@ -314,5 +313,238 @@ export class Swap extends Entity {
 
   set logIndex(value: BigInt) {
     this.set("logIndex", Value.fromBigInt(value));
+  }
+}
+
+export class Pool extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("address", Value.fromBytes(Bytes.empty()));
+    this.set("strategyType", Value.fromI32(0));
+    this.set("createTime", Value.fromI32(0));
+    this.set("tokensList", Value.fromBytesArray(new Array(0)));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Pool entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Pool entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Pool", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Pool | null {
+    return changetype<Pool | null>(store.get("Pool", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value!.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get poolType(): string | null {
+    let value = this.get("poolType");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set poolType(value: string | null) {
+    if (!value) {
+      this.unset("poolType");
+    } else {
+      this.set("poolType", Value.fromString(<string>value));
+    }
+  }
+
+  get factory(): Bytes | null {
+    let value = this.get("factory");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set factory(value: Bytes | null) {
+    if (!value) {
+      this.unset("factory");
+    } else {
+      this.set("factory", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get strategyType(): i32 {
+    let value = this.get("strategyType");
+    return value!.toI32();
+  }
+
+  set strategyType(value: i32) {
+    this.set("strategyType", Value.fromI32(value));
+  }
+
+  get createTime(): i32 {
+    let value = this.get("createTime");
+    return value!.toI32();
+  }
+
+  set createTime(value: i32) {
+    this.set("createTime", Value.fromI32(value));
+  }
+
+  get tokensList(): Array<Bytes> {
+    let value = this.get("tokensList");
+    return value!.toBytesArray();
+  }
+
+  set tokensList(value: Array<Bytes>) {
+    this.set("tokensList", Value.fromBytesArray(value));
+  }
+
+  get tokens(): Array<string> | null {
+    let value = this.get("tokens");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set tokens(value: Array<string> | null) {
+    if (!value) {
+      this.unset("tokens");
+    } else {
+      this.set("tokens", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get swaps(): Array<string> | null {
+    let value = this.get("swaps");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set swaps(value: Array<string> | null) {
+    if (!value) {
+      this.unset("swaps");
+    } else {
+      this.set("swaps", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+}
+
+export class PoolToken extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("poolId", Value.fromString(""));
+    this.set("token", Value.fromString(""));
+    this.set("address", Value.fromString(""));
+    this.set("balance", Value.fromBigDecimal(BigDecimal.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save PoolToken entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save PoolToken entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("PoolToken", id.toString(), this);
+    }
+  }
+
+  static load(id: string): PoolToken | null {
+    return changetype<PoolToken | null>(store.get("PoolToken", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get poolId(): string {
+    let value = this.get("poolId");
+    return value!.toString();
+  }
+
+  set poolId(value: string) {
+    this.set("poolId", Value.fromString(value));
+  }
+
+  get token(): string {
+    let value = this.get("token");
+    return value!.toString();
+  }
+
+  set token(value: string) {
+    this.set("token", Value.fromString(value));
+  }
+
+  get address(): string {
+    let value = this.get("address");
+    return value!.toString();
+  }
+
+  set address(value: string) {
+    this.set("address", Value.fromString(value));
+  }
+
+  get balance(): BigDecimal {
+    let value = this.get("balance");
+    return value!.toBigDecimal();
+  }
+
+  set balance(value: BigDecimal) {
+    this.set("balance", Value.fromBigDecimal(value));
+  }
+
+  get weight(): BigDecimal | null {
+    let value = this.get("weight");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigDecimal();
+    }
+  }
+
+  set weight(value: BigDecimal | null) {
+    if (!value) {
+      this.unset("weight");
+    } else {
+      this.set("weight", Value.fromBigDecimal(<BigDecimal>value));
+    }
   }
 }

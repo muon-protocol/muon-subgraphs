@@ -1,7 +1,6 @@
 # Vault
 type Vault @entity {
   id: ID!
-  totalSwapCount: BigInt!
 }
 
 type Token @entity {
@@ -11,13 +10,7 @@ type Token @entity {
   # mirrored from the smart contract
   symbol: String!
   name: String!
-  decimals: BigInt!
-
-  # used for other stats like marketcap
-  totalSupply: BigInt!
-
-  # liquidity across all pairs
-  totalLiquidity: BigDecimal!
+  decimals: Int!
 }
 
 type Transaction @entity {
@@ -32,11 +25,37 @@ type Swap @entity {
   transaction: Transaction!
   timestamp: BigInt!
 
-  poolId: Bytes!
+  poolId: Pool!
   from: Bytes!
   tokenIn: Token!
   tokenOut: Token!
   tokenAmountIn: BigDecimal!
   tokenAmountOut: BigDecimal!
+  balanceIn: BigDecimal!
+  balanceOut: BigDecimal!
+  poolTokenBalances: [BigDecimal!]!
   logIndex: BigInt!
+}
+
+type Pool @entity {
+  id: ID!
+  address: Bytes!
+  poolType: String
+  factory: Bytes
+  strategyType: Int!
+  createTime: Int!
+  tokensList: [Bytes!]!
+  tokens: [PoolToken!] @derivedFrom(field: "poolId")
+  swaps: [Swap!] @derivedFrom(field: "poolId")
+}
+
+type PoolToken @entity {
+  id: ID!
+  poolId: Pool!
+  token: Token!
+  address: String!
+  balance: BigDecimal!
+
+  # WeightedPool Only
+  weight: BigDecimal
 }
