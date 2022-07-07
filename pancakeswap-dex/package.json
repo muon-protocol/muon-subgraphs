@@ -1,15 +1,16 @@
 {
   "name": "PancakeSwap",
-  "description": "PancakeSwap Subgraph",
-  "version": "1.0.0",
-  "license": "GPL-3.0-or-later",
+  "license": "UNLICENSED",
   "scripts": {
-    "codegen": "./node_modules/.bin/graph codegen subgraph.yaml",
-    "build": "./node_modules/.bin/graph build subgraph.yaml",
-    "deploy": "./node_modules/.bin/graph deploy --product hosted-service --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ ShayanShiravani/Pancakeswap subgraph.yaml"
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ ShayanShiravani/Pancakeswap",
+    "create-local": "graph create --node http://localhost:8020/ ShayanShiravani/Pancakeswap",
+    "remove-local": "graph remove --node http://localhost:8020/ ShayanShiravani/Pancakeswap",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 ShayanShiravani/Pancakeswap"
   },
-  "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.21.0",
-    "@graphprotocol/graph-ts": "^0.20.0"
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.26.0",
+    "@graphprotocol/graph-ts": "0.24.1"
   }
 }
