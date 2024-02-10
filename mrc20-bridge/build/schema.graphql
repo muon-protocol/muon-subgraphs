@@ -66,8 +66,7 @@ type BridgeEntity @entity {
   txId: BigInt!
   tokenId: BigInt!
   fromChain: BigInt!
-  toChain: BigInt!
-  claimedChain:BigInt!
+  toChain: BigInt
   user: Bytes!
   amount: BigInt!
   tokenAddress: Bytes!

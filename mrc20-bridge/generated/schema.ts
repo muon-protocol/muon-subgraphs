@@ -858,30 +858,21 @@ export class BridgeEntity extends Entity {
     this.set("fromChain", Value.fromBigInt(value));
   }
 
-  get toChain(): BigInt {
+  get toChain(): BigInt | null {
     let value = this.get("toChain");
     if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+      return null;
     } else {
       return value.toBigInt();
     }
   }
 
-  set toChain(value: BigInt) {
-    this.set("toChain", Value.fromBigInt(value));
-  }
-
-  get claimedChain(): BigInt {
-    let value = this.get("claimedChain");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+  set toChain(value: BigInt | null) {
+    if (!value) {
+      this.unset("toChain");
     } else {
-      return value.toBigInt();
+      this.set("toChain", Value.fromBigInt(<BigInt>value));
     }
-  }
-
-  set claimedChain(value: BigInt) {
-    this.set("claimedChain", Value.fromBigInt(value));
   }
 
   get user(): Bytes {

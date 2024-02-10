@@ -46,14 +46,7 @@ export function handleClaim(event: ClaimEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
-  setClaim(
-    event.block, 
-    event.transaction.hash, 
-    event.params.txId, 
-    event.params.user, 
-    event.params.fromChain,
-    event.logIndex
-  )
+  setClaim(event)
 }
 
 export function handleDeposit(event: DepositEvent): void {
@@ -67,13 +60,7 @@ export function handleDeposit(event: DepositEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
-  setDeposit(
-    event.block,
-    event.transaction.hash,
-    event.params.txId,
-    event.address,
-    event.logIndex
-  )
+  setDeposit(event)
 }
 
 export function handleRoleAdminChanged(event: RoleAdminChangedEvent): void {
