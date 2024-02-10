@@ -1,17 +1,8 @@
 [
   {
     "inputs": [
-      { "internalType": "uint256", "name": "_muonAppId", "type": "uint256" },
-      {
-        "components": [
-          { "internalType": "uint256", "name": "x", "type": "uint256" },
-          { "internalType": "uint8", "name": "parity", "type": "uint8" }
-        ],
-        "internalType": "struct IMuonClient.PublicKey",
-        "name": "_muonPublicKey",
-        "type": "tuple"
-      },
       { "internalType": "address", "name": "_muon", "type": "address" },
+      { "internalType": "uint256", "name": "_minReqSigs", "type": "uint256" },
       { "internalType": "uint256", "name": "_fee", "type": "uint256" }
     ],
     "stateMutability": "nonpayable",
@@ -52,7 +43,7 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "fromChain",
         "type": "uint256"
@@ -61,12 +52,6 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -170,6 +155,13 @@
   },
   {
     "inputs": [],
+    "name": "APP_ID",
+    "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
@@ -200,16 +192,16 @@
       { "internalType": "uint256", "name": "toChain", "type": "uint256" },
       { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
       { "internalType": "uint256", "name": "txId", "type": "uint256" },
-      { "internalType": "bytes", "name": "reqId", "type": "bytes" },
+      { "internalType": "bytes", "name": "_reqId", "type": "bytes" },
       {
         "components": [
           { "internalType": "uint256", "name": "signature", "type": "uint256" },
           { "internalType": "address", "name": "owner", "type": "address" },
           { "internalType": "address", "name": "nonce", "type": "address" }
         ],
-        "internalType": "struct IMuonClient.SchnorrSign",
-        "name": "signature",
-        "type": "tuple"
+        "internalType": "struct IMuonV02.SchnorrSign[]",
+        "name": "sigs",
+        "type": "tuple[]"
       }
     ],
     "name": "claim",
@@ -364,26 +356,16 @@
   },
   {
     "inputs": [],
-    "name": "muon",
-    "outputs": [
-      { "internalType": "contract IMuonClient", "name": "", "type": "address" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "muonAppId",
+    "name": "minReqSigs",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "muonPublicKey",
+    "name": "muon",
     "outputs": [
-      { "internalType": "uint256", "name": "x", "type": "uint256" },
-      { "internalType": "uint8", "name": "parity", "type": "uint8" }
+      { "internalType": "contract IMuonV02", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -405,16 +387,6 @@
       { "internalType": "bool[]", "name": "unclaimedIds", "type": "bool[]" }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
-      { "internalType": "address", "name": "tokenAddress", "type": "address" }
-    ],
-    "name": "removeToken",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -448,26 +420,18 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "addr", "type": "address" }
+      { "internalType": "uint256", "name": "_minReqSigs", "type": "uint256" }
     ],
-    "name": "setMuonContract",
+    "name": "setMinReqSigs",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "components": [
-          { "internalType": "uint256", "name": "x", "type": "uint256" },
-          { "internalType": "uint8", "name": "parity", "type": "uint8" }
-        ],
-        "internalType": "struct IMuonClient.PublicKey",
-        "name": "_muonPublicKey",
-        "type": "tuple"
-      }
+      { "internalType": "address", "name": "addr", "type": "address" }
     ],
-    "name": "setMuonPubKey",
+    "name": "setMuonContract",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

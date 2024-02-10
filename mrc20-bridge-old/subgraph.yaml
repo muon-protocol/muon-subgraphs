@@ -1,19 +1,17 @@
-specVersion: 1.0.0
-indexerHints:
-  prune: auto
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
     name: MRC20Bridge
-    network: chapel
+    network: ropsten
     source:
-      address: "0xC061365eaE4a469f3eDe035c1c8f3C0F602CfB03"
+      address: '0xb8e84d2F8e3EbA1d2Eb512117C8Dd398647C4C7d'
       abi: MRC20Bridge
-      startBlock: 37068971
+      startBlock: 12161422
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - AddToken
@@ -28,7 +26,7 @@ dataSources:
       eventHandlers:
         - event: AddToken(address,uint256)
           handler: handleAddToken
-        - event: Claim(indexed address,uint256,indexed uint256,uint256,indexed uint256)
+        - event: Claim(indexed address,uint256,uint256,uint256)
           handler: handleClaim
         - event: Deposit(uint256)
           handler: handleDeposit
@@ -38,4 +36,4 @@ dataSources:
           handler: handleRoleGranted
         - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
           handler: handleRoleRevoked
-      file: ./src/mrc-20-bridge.ts
+      file: ./src/mapping.ts
