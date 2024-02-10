@@ -2,13 +2,13 @@ specVersion: 1.0.0
 indexerHints:
   prune: auto
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: MRC20Bridge
     network: optimism
     source:
-      address: '0x6B0251c3Ab1bfF327c4Fc9195354909FF44383b7'
+      address: "0x6B0251c3Ab1bfF327c4Fc9195354909FF44383b7"
       abi: MRC20Bridge
       startBlock: 115993208
     mapping:
@@ -24,7 +24,7 @@ dataSources:
         - RoleRevoked
       abis:
         - name: MRC20Bridge
-          file: ./abis/MRC20Bridge.json
+          file: MRC20Bridge/abis/MRC20Bridge.json
       eventHandlers:
         - event: AddToken(address,uint256)
           handler: handleAddToken
@@ -38,4 +38,4 @@ dataSources:
           handler: handleRoleGranted
         - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
           handler: handleRoleRevoked
-      file: ./src/mrc-20-bridge.ts
+      file: MRC20Bridge/MRC20Bridge.wasm

@@ -14,6 +14,8 @@ import {
   RoleGranted,
   RoleRevoked
 } from "../generated/schema"
+import { setClaim } from "./claim"
+import { setDeposit } from "./deposit"
 
 export function handleAddToken(event: AddTokenEvent): void {
   let entity = new AddToken(
@@ -44,6 +46,14 @@ export function handleClaim(event: ClaimEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+  setClaim(
+    event.block, 
+    event.transaction.hash, 
+    event.params.txId, 
+    event.params.user, 
+    event.params.fromChain,
+    event.logIndex
+  )
 }
 
 export function handleDeposit(event: DepositEvent): void {
@@ -57,6 +67,13 @@ export function handleDeposit(event: DepositEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+  setDeposit(
+    event.block,
+    event.transaction.hash,
+    event.params.txId,
+    event.address,
+    event.logIndex
+  )
 }
 
 export function handleRoleAdminChanged(event: RoleAdminChangedEvent): void {
