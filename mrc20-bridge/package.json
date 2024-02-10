@@ -6,7 +6,7 @@
     "build": "graph build",
     "deploy:mainnet": "graph deploy --node https://api.thegraph.com/deploy/ shayanshiravani/mrc20-bridge-mainnet",
     "deploy:optimisim": "graph deploy --node https://api.thegraph.com/deploy/ shayanshiravani/mrc20-bridge-optimisim",
-    "deploy:arbitrum-one": "graph deploy --node https://api.thegraph.com/deploy/ shayanshiravani/mrc20-bridge-arbitrumone",
+    "deploy:arbitrum-one": "graph deploy --node https://api.thegraph.com/deploy/ shayanshiravani/mrc20-bridge-arbitrum-one",
     "create-local": "graph create --node http://localhost:8020/ shayanshiravani/mrc20-bridge",
     "remove-local": "graph remove --node http://localhost:8020/ shayanshiravani/mrc20-bridge",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 shayanshiravani/mrc20-bridge",
