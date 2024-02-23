@@ -30,6 +30,14 @@ export class AddToken__Params {
   get tokenId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
+
+  get mintable(): boolean {
+    return this._event.parameters[2].value.toBoolean();
+  }
+
+  get hasParameters(): boolean {
+    return this._event.parameters[3].value.toBoolean();
+  }
 }
 
 export class Claim extends ethereum.Event {
@@ -55,10 +63,6 @@ export class Claim__Params {
 
   get fromChain(): BigInt {
     return this._event.parameters[2].value.toBigInt();
-  }
-
-  get amount(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
   }
 }
 
@@ -158,21 +162,25 @@ export class RoleRevoked__Params {
   }
 }
 
-export class MRC20Bridge__getTxResult {
+export class MRC721Bridge__getTxResult {
   value0: BigInt;
   value1: BigInt;
   value2: BigInt;
   value3: BigInt;
-  value4: BigInt;
+  value4: Address;
   value5: Address;
+  value6: boolean;
+  value7: Array<BigInt>;
 
   constructor(
     value0: BigInt,
     value1: BigInt,
     value2: BigInt,
     value3: BigInt,
-    value4: BigInt,
-    value5: Address
+    value4: Address,
+    value5: Address,
+    value6: boolean,
+    value7: Array<BigInt>
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -180,6 +188,8 @@ export class MRC20Bridge__getTxResult {
     this.value3 = value3;
     this.value4 = value4;
     this.value5 = value5;
+    this.value6 = value6;
+    this.value7 = value7;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -188,38 +198,37 @@ export class MRC20Bridge__getTxResult {
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
-    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
+    map.set("value4", ethereum.Value.fromAddress(this.value4));
     map.set("value5", ethereum.Value.fromAddress(this.value5));
+    map.set("value6", ethereum.Value.fromBoolean(this.value6));
+    map.set("value7", ethereum.Value.fromUnsignedBigIntArray(this.value7));
     return map;
   }
 }
 
-export class MRC20Bridge__txsResult {
+export class MRC721Bridge__txsResult {
   value0: BigInt;
   value1: BigInt;
-  value2: BigInt;
-  value3: Address;
+  value2: Address;
 
-  constructor(value0: BigInt, value1: BigInt, value2: BigInt, value3: Address) {
+  constructor(value0: BigInt, value1: BigInt, value2: Address) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
-    this.value3 = value3;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
     map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
-    map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
-    map.set("value3", ethereum.Value.fromAddress(this.value3));
+    map.set("value2", ethereum.Value.fromAddress(this.value2));
     return map;
   }
 }
 
-export class MRC20Bridge extends ethereum.SmartContract {
-  static bind(address: Address): MRC20Bridge {
-    return new MRC20Bridge("MRC20Bridge", address);
+export class MRC721Bridge extends ethereum.SmartContract {
+  static bind(address: Address): MRC721Bridge {
+    return new MRC721Bridge("MRC721Bridge", address);
   }
 
   ADMIN_ROLE(): Bytes {
@@ -298,6 +307,44 @@ export class MRC20Bridge extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
+  _ERC721_RECEIVED(): Bytes {
+    let result = super.call(
+      "_ERC721_RECEIVED",
+      "_ERC721_RECEIVED():(bytes4)",
+      []
+    );
+
+    return result[0].toBytes();
+  }
+
+  try__ERC721_RECEIVED(): ethereum.CallResult<Bytes> {
+    let result = super.tryCall(
+      "_ERC721_RECEIVED",
+      "_ERC721_RECEIVED():(bytes4)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
+  }
+
+  bridgeFee(): BigInt {
+    let result = super.call("bridgeFee", "bridgeFee():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_bridgeFee(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("bridgeFee", "bridgeFee():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   claimedTxs(param0: BigInt, param1: BigInt): boolean {
     let result = super.call(
       "claimedTxs",
@@ -327,128 +374,20 @@ export class MRC20Bridge extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  deposit(amount: BigInt, toChain: BigInt, tokenId: BigInt): BigInt {
+  getCurrentChainID(): BigInt {
     let result = super.call(
-      "deposit",
-      "deposit(uint256,uint256,uint256):(uint256)",
-      [
-        ethereum.Value.fromUnsignedBigInt(amount),
-        ethereum.Value.fromUnsignedBigInt(toChain),
-        ethereum.Value.fromUnsignedBigInt(tokenId)
-      ]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_deposit(
-    amount: BigInt,
-    toChain: BigInt,
-    tokenId: BigInt
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "deposit",
-      "deposit(uint256,uint256,uint256):(uint256)",
-      [
-        ethereum.Value.fromUnsignedBigInt(amount),
-        ethereum.Value.fromUnsignedBigInt(toChain),
-        ethereum.Value.fromUnsignedBigInt(tokenId)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  depositFor(
-    user: Address,
-    amount: BigInt,
-    toChain: BigInt,
-    tokenId: BigInt
-  ): BigInt {
-    let result = super.call(
-      "depositFor",
-      "depositFor(address,uint256,uint256,uint256):(uint256)",
-      [
-        ethereum.Value.fromAddress(user),
-        ethereum.Value.fromUnsignedBigInt(amount),
-        ethereum.Value.fromUnsignedBigInt(toChain),
-        ethereum.Value.fromUnsignedBigInt(tokenId)
-      ]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_depositFor(
-    user: Address,
-    amount: BigInt,
-    toChain: BigInt,
-    tokenId: BigInt
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "depositFor",
-      "depositFor(address,uint256,uint256,uint256):(uint256)",
-      [
-        ethereum.Value.fromAddress(user),
-        ethereum.Value.fromUnsignedBigInt(amount),
-        ethereum.Value.fromUnsignedBigInt(toChain),
-        ethereum.Value.fromUnsignedBigInt(tokenId)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  fee(): BigInt {
-    let result = super.call("fee", "fee():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_fee(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("fee", "fee():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  feeScale(): BigInt {
-    let result = super.call("feeScale", "feeScale():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_feeScale(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("feeScale", "feeScale():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  getExecutingChainID(): BigInt {
-    let result = super.call(
-      "getExecutingChainID",
-      "getExecutingChainID():(uint256)",
+      "getCurrentChainID",
+      "getCurrentChainID():(uint256)",
       []
     );
 
     return result[0].toBigInt();
   }
 
-  try_getExecutingChainID(): ethereum.CallResult<BigInt> {
+  try_getCurrentChainID(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "getExecutingChainID",
-      "getExecutingChainID():(uint256)",
+      "getCurrentChainID",
+      "getCurrentChainID():(uint256)",
       []
     );
     if (result.reverted) {
@@ -498,27 +437,29 @@ export class MRC20Bridge extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getTx(_txId: BigInt): MRC20Bridge__getTxResult {
+  getTx(_txId: BigInt): MRC721Bridge__getTxResult {
     let result = super.call(
       "getTx",
-      "getTx(uint256):(uint256,uint256,uint256,uint256,uint256,address)",
+      "getTx(uint256):(uint256,uint256,uint256,uint256,address,address,bool,uint256[])",
       [ethereum.Value.fromUnsignedBigInt(_txId)]
     );
 
-    return new MRC20Bridge__getTxResult(
+    return new MRC721Bridge__getTxResult(
       result[0].toBigInt(),
       result[1].toBigInt(),
       result[2].toBigInt(),
       result[3].toBigInt(),
-      result[4].toBigInt(),
-      result[5].toAddress()
+      result[4].toAddress(),
+      result[5].toAddress(),
+      result[6].toBoolean(),
+      result[7].toBigIntArray()
     );
   }
 
-  try_getTx(_txId: BigInt): ethereum.CallResult<MRC20Bridge__getTxResult> {
+  try_getTx(_txId: BigInt): ethereum.CallResult<MRC721Bridge__getTxResult> {
     let result = super.tryCall(
       "getTx",
-      "getTx(uint256):(uint256,uint256,uint256,uint256,uint256,address)",
+      "getTx(uint256):(uint256,uint256,uint256,uint256,address,address,bool,uint256[])",
       [ethereum.Value.fromUnsignedBigInt(_txId)]
     );
     if (result.reverted) {
@@ -526,13 +467,15 @@ export class MRC20Bridge extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new MRC20Bridge__getTxResult(
+      new MRC721Bridge__getTxResult(
         value[0].toBigInt(),
         value[1].toBigInt(),
         value[2].toBigInt(),
         value[3].toBigInt(),
-        value[4].toBigInt(),
-        value[5].toAddress()
+        value[4].toAddress(),
+        value[5].toAddress(),
+        value[6].toBoolean(),
+        value[7].toBigIntArray()
       )
     );
   }
@@ -592,19 +535,23 @@ export class MRC20Bridge extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  minReqSigs(): BigInt {
-    let result = super.call("minReqSigs", "minReqSigs():(uint256)", []);
+  mintable(param0: BigInt): boolean {
+    let result = super.call("mintable", "mintable(uint256):(bool)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
 
-    return result[0].toBigInt();
+    return result[0].toBoolean();
   }
 
-  try_minReqSigs(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("minReqSigs", "minReqSigs():(uint256)", []);
+  try_mintable(param0: BigInt): ethereum.CallResult<boolean> {
+    let result = super.tryCall("mintable", "mintable(uint256):(bool)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   muon(): Address {
@@ -635,6 +582,49 @@ export class MRC20Bridge extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  onERC721Received(
+    operator: Address,
+    from: Address,
+    tokenId: BigInt,
+    data: Bytes
+  ): Bytes {
+    let result = super.call(
+      "onERC721Received",
+      "onERC721Received(address,address,uint256,bytes):(bytes4)",
+      [
+        ethereum.Value.fromAddress(operator),
+        ethereum.Value.fromAddress(from),
+        ethereum.Value.fromUnsignedBigInt(tokenId),
+        ethereum.Value.fromBytes(data)
+      ]
+    );
+
+    return result[0].toBytes();
+  }
+
+  try_onERC721Received(
+    operator: Address,
+    from: Address,
+    tokenId: BigInt,
+    data: Bytes
+  ): ethereum.CallResult<Bytes> {
+    let result = super.tryCall(
+      "onERC721Received",
+      "onERC721Received(address,address,uint256,bytes):(bytes4)",
+      [
+        ethereum.Value.fromAddress(operator),
+        ethereum.Value.fromAddress(from),
+        ethereum.Value.fromUnsignedBigInt(tokenId),
+        ethereum.Value.fromBytes(data)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
   pendingTxs(fromChain: BigInt, _ids: Array<BigInt>): Array<boolean> {
@@ -711,25 +701,45 @@ export class MRC20Bridge extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  txs(param0: BigInt): MRC20Bridge__txsResult {
+  transferParameters(param0: BigInt): boolean {
     let result = super.call(
-      "txs",
-      "txs(uint256):(uint256,uint256,uint256,address)",
+      "transferParameters",
+      "transferParameters(uint256):(bool)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
-    return new MRC20Bridge__txsResult(
+    return result[0].toBoolean();
+  }
+
+  try_transferParameters(param0: BigInt): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "transferParameters",
+      "transferParameters(uint256):(bool)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  txs(param0: BigInt): MRC721Bridge__txsResult {
+    let result = super.call("txs", "txs(uint256):(uint256,uint256,address)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
+
+    return new MRC721Bridge__txsResult(
       result[0].toBigInt(),
       result[1].toBigInt(),
-      result[2].toBigInt(),
-      result[3].toAddress()
+      result[2].toAddress()
     );
   }
 
-  try_txs(param0: BigInt): ethereum.CallResult<MRC20Bridge__txsResult> {
+  try_txs(param0: BigInt): ethereum.CallResult<MRC721Bridge__txsResult> {
     let result = super.tryCall(
       "txs",
-      "txs(uint256):(uint256,uint256,uint256,address)",
+      "txs(uint256):(uint256,uint256,address)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -737,11 +747,10 @@ export class MRC20Bridge extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new MRC20Bridge__txsResult(
+      new MRC721Bridge__txsResult(
         value[0].toBigInt(),
         value[1].toBigInt(),
-        value[2].toBigInt(),
-        value[3].toAddress()
+        value[2].toAddress()
       )
     );
   }
@@ -766,14 +775,6 @@ export class ConstructorCall__Inputs {
 
   get _muon(): Address {
     return this._call.inputValues[0].value.toAddress();
-  }
-
-  get _minReqSigs(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get _fee(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
   }
 }
 
@@ -809,12 +810,58 @@ export class AddTokenCall__Inputs {
   get tokenAddress(): Address {
     return this._call.inputValues[1].value.toAddress();
   }
+
+  get _mintable(): boolean {
+    return this._call.inputValues[2].value.toBoolean();
+  }
+
+  get _transferParameters(): boolean {
+    return this._call.inputValues[3].value.toBoolean();
+  }
 }
 
 export class AddTokenCall__Outputs {
   _call: AddTokenCall;
 
   constructor(call: AddTokenCall) {
+    this._call = call;
+  }
+}
+
+export class AdminWithdrawTokensCall extends ethereum.Call {
+  get inputs(): AdminWithdrawTokensCall__Inputs {
+    return new AdminWithdrawTokensCall__Inputs(this);
+  }
+
+  get outputs(): AdminWithdrawTokensCall__Outputs {
+    return new AdminWithdrawTokensCall__Outputs(this);
+  }
+}
+
+export class AdminWithdrawTokensCall__Inputs {
+  _call: AdminWithdrawTokensCall;
+
+  constructor(call: AdminWithdrawTokensCall) {
+    this._call = call;
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get tokenAddress(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
+}
+
+export class AdminWithdrawTokensCall__Outputs {
+  _call: AdminWithdrawTokensCall;
+
+  constructor(call: AdminWithdrawTokensCall) {
     this._call = call;
   }
 }
@@ -836,36 +883,24 @@ export class ClaimCall__Inputs {
     this._call = call;
   }
 
-  get user(): Address {
-    return this._call.inputValues[0].value.toAddress();
+  get nftId(): Array<BigInt> {
+    return this._call.inputValues[0].value.toBigIntArray();
   }
 
-  get amount(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
+  get nftParams(): Bytes {
+    return this._call.inputValues[1].value.toBytes();
   }
 
-  get fromChain(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get toChain(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get tokenId(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
-
-  get txId(): BigInt {
-    return this._call.inputValues[5].value.toBigInt();
+  get txParams(): Array<BigInt> {
+    return this._call.inputValues[2].value.toBigIntArray();
   }
 
   get _reqId(): Bytes {
-    return this._call.inputValues[6].value.toBytes();
+    return this._call.inputValues[3].value.toBytes();
   }
 
-  get sigs(): Array<ClaimCallSigsStruct> {
-    return this._call.inputValues[7].value.toTupleArray<ClaimCallSigsStruct>();
+  get _sigs(): Array<ClaimCall_sigsStruct> {
+    return this._call.inputValues[4].value.toTupleArray<ClaimCall_sigsStruct>();
   }
 }
 
@@ -877,7 +912,73 @@ export class ClaimCall__Outputs {
   }
 }
 
-export class ClaimCallSigsStruct extends ethereum.Tuple {
+export class ClaimCall_sigsStruct extends ethereum.Tuple {
+  get signature(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get owner(): Address {
+    return this[1].toAddress();
+  }
+
+  get nonce(): Address {
+    return this[2].toAddress();
+  }
+}
+
+export class ClaimForCall extends ethereum.Call {
+  get inputs(): ClaimForCall__Inputs {
+    return new ClaimForCall__Inputs(this);
+  }
+
+  get outputs(): ClaimForCall__Outputs {
+    return new ClaimForCall__Outputs(this);
+  }
+}
+
+export class ClaimForCall__Inputs {
+  _call: ClaimForCall;
+
+  constructor(call: ClaimForCall) {
+    this._call = call;
+  }
+
+  get user(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get nftId(): Array<BigInt> {
+    return this._call.inputValues[1].value.toBigIntArray();
+  }
+
+  get nftParams(): Bytes {
+    return this._call.inputValues[2].value.toBytes();
+  }
+
+  get txParams(): Array<BigInt> {
+    return this._call.inputValues[3].value.toBigIntArray();
+  }
+
+  get _reqId(): Bytes {
+    return this._call.inputValues[4].value.toBytes();
+  }
+
+  get _sigs(): Array<ClaimForCall_sigsStruct> {
+    return this._call.inputValues[5].value.toTupleArray<
+      ClaimForCall_sigsStruct
+    >();
+  }
+}
+
+export class ClaimForCall__Outputs {
+  _call: ClaimForCall;
+
+  constructor(call: ClaimForCall) {
+    this._call = call;
+  }
+}
+
+export class ClaimForCall_sigsStruct extends ethereum.Tuple {
   get signature(): BigInt {
     return this[0].toBigInt();
   }
@@ -908,8 +1009,8 @@ export class DepositCall__Inputs {
     this._call = call;
   }
 
-  get amount(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
+  get nftId(): Array<BigInt> {
+    return this._call.inputValues[0].value.toBigIntArray();
   }
 
   get toChain(): BigInt {
@@ -933,66 +1034,20 @@ export class DepositCall__Outputs {
   }
 }
 
-export class DepositForCall extends ethereum.Call {
-  get inputs(): DepositForCall__Inputs {
-    return new DepositForCall__Inputs(this);
+export class EmergencyWithdrawERC721TokensCall extends ethereum.Call {
+  get inputs(): EmergencyWithdrawERC721TokensCall__Inputs {
+    return new EmergencyWithdrawERC721TokensCall__Inputs(this);
   }
 
-  get outputs(): DepositForCall__Outputs {
-    return new DepositForCall__Outputs(this);
-  }
-}
-
-export class DepositForCall__Inputs {
-  _call: DepositForCall;
-
-  constructor(call: DepositForCall) {
-    this._call = call;
-  }
-
-  get user(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get toChain(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get tokenId(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
+  get outputs(): EmergencyWithdrawERC721TokensCall__Outputs {
+    return new EmergencyWithdrawERC721TokensCall__Outputs(this);
   }
 }
 
-export class DepositForCall__Outputs {
-  _call: DepositForCall;
+export class EmergencyWithdrawERC721TokensCall__Inputs {
+  _call: EmergencyWithdrawERC721TokensCall;
 
-  constructor(call: DepositForCall) {
-    this._call = call;
-  }
-
-  get txId(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
-  }
-}
-
-export class EmergencyWithdrawERC20TokensCall extends ethereum.Call {
-  get inputs(): EmergencyWithdrawERC20TokensCall__Inputs {
-    return new EmergencyWithdrawERC20TokensCall__Inputs(this);
-  }
-
-  get outputs(): EmergencyWithdrawERC20TokensCall__Outputs {
-    return new EmergencyWithdrawERC20TokensCall__Outputs(this);
-  }
-}
-
-export class EmergencyWithdrawERC20TokensCall__Inputs {
-  _call: EmergencyWithdrawERC20TokensCall;
-
-  constructor(call: EmergencyWithdrawERC20TokensCall) {
+  constructor(call: EmergencyWithdrawERC721TokensCall) {
     this._call = call;
   }
 
@@ -1004,49 +1059,15 @@ export class EmergencyWithdrawERC20TokensCall__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get _amount(): BigInt {
+  get _id(): BigInt {
     return this._call.inputValues[2].value.toBigInt();
   }
 }
 
-export class EmergencyWithdrawERC20TokensCall__Outputs {
-  _call: EmergencyWithdrawERC20TokensCall;
+export class EmergencyWithdrawERC721TokensCall__Outputs {
+  _call: EmergencyWithdrawERC721TokensCall;
 
-  constructor(call: EmergencyWithdrawERC20TokensCall) {
-    this._call = call;
-  }
-}
-
-export class EmergencyWithdrawETHCall extends ethereum.Call {
-  get inputs(): EmergencyWithdrawETHCall__Inputs {
-    return new EmergencyWithdrawETHCall__Inputs(this);
-  }
-
-  get outputs(): EmergencyWithdrawETHCall__Outputs {
-    return new EmergencyWithdrawETHCall__Outputs(this);
-  }
-}
-
-export class EmergencyWithdrawETHCall__Inputs {
-  _call: EmergencyWithdrawETHCall;
-
-  constructor(call: EmergencyWithdrawETHCall) {
-    this._call = call;
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get addr(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-}
-
-export class EmergencyWithdrawETHCall__Outputs {
-  _call: EmergencyWithdrawETHCall;
-
-  constructor(call: EmergencyWithdrawETHCall) {
+  constructor(call: EmergencyWithdrawERC721TokensCall) {
     this._call = call;
   }
 }
@@ -1082,6 +1103,52 @@ export class GrantRoleCall__Outputs {
 
   constructor(call: GrantRoleCall) {
     this._call = call;
+  }
+}
+
+export class OnERC721ReceivedCall extends ethereum.Call {
+  get inputs(): OnERC721ReceivedCall__Inputs {
+    return new OnERC721ReceivedCall__Inputs(this);
+  }
+
+  get outputs(): OnERC721ReceivedCall__Outputs {
+    return new OnERC721ReceivedCall__Outputs(this);
+  }
+}
+
+export class OnERC721ReceivedCall__Inputs {
+  _call: OnERC721ReceivedCall;
+
+  constructor(call: OnERC721ReceivedCall) {
+    this._call = call;
+  }
+
+  get operator(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get from(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get data(): Bytes {
+    return this._call.inputValues[3].value.toBytes();
+  }
+}
+
+export class OnERC721ReceivedCall__Outputs {
+  _call: OnERC721ReceivedCall;
+
+  constructor(call: OnERC721ReceivedCall) {
+    this._call = call;
+  }
+
+  get value0(): Bytes {
+    return this._call.outputValues[0].value.toBytes();
   }
 }
 
@@ -1153,92 +1220,32 @@ export class RevokeRoleCall__Outputs {
   }
 }
 
-export class SetFeeCall extends ethereum.Call {
-  get inputs(): SetFeeCall__Inputs {
-    return new SetFeeCall__Inputs(this);
+export class SetBridgeFeeCall extends ethereum.Call {
+  get inputs(): SetBridgeFeeCall__Inputs {
+    return new SetBridgeFeeCall__Inputs(this);
   }
 
-  get outputs(): SetFeeCall__Outputs {
-    return new SetFeeCall__Outputs(this);
+  get outputs(): SetBridgeFeeCall__Outputs {
+    return new SetBridgeFeeCall__Outputs(this);
   }
 }
 
-export class SetFeeCall__Inputs {
-  _call: SetFeeCall;
+export class SetBridgeFeeCall__Inputs {
+  _call: SetBridgeFeeCall;
 
-  constructor(call: SetFeeCall) {
+  constructor(call: SetBridgeFeeCall) {
     this._call = call;
   }
 
-  get _fee(): BigInt {
+  get _val(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 }
 
-export class SetFeeCall__Outputs {
-  _call: SetFeeCall;
+export class SetBridgeFeeCall__Outputs {
+  _call: SetBridgeFeeCall;
 
-  constructor(call: SetFeeCall) {
-    this._call = call;
-  }
-}
-
-export class SetMinReqSigsCall extends ethereum.Call {
-  get inputs(): SetMinReqSigsCall__Inputs {
-    return new SetMinReqSigsCall__Inputs(this);
-  }
-
-  get outputs(): SetMinReqSigsCall__Outputs {
-    return new SetMinReqSigsCall__Outputs(this);
-  }
-}
-
-export class SetMinReqSigsCall__Inputs {
-  _call: SetMinReqSigsCall;
-
-  constructor(call: SetMinReqSigsCall) {
-    this._call = call;
-  }
-
-  get _minReqSigs(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SetMinReqSigsCall__Outputs {
-  _call: SetMinReqSigsCall;
-
-  constructor(call: SetMinReqSigsCall) {
-    this._call = call;
-  }
-}
-
-export class SetMuonContractCall extends ethereum.Call {
-  get inputs(): SetMuonContractCall__Inputs {
-    return new SetMuonContractCall__Inputs(this);
-  }
-
-  get outputs(): SetMuonContractCall__Outputs {
-    return new SetMuonContractCall__Outputs(this);
-  }
-}
-
-export class SetMuonContractCall__Inputs {
-  _call: SetMuonContractCall;
-
-  constructor(call: SetMuonContractCall) {
-    this._call = call;
-  }
-
-  get addr(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class SetMuonContractCall__Outputs {
-  _call: SetMuonContractCall;
-
-  constructor(call: SetMuonContractCall) {
+  constructor(call: SetBridgeFeeCall) {
     this._call = call;
   }
 }

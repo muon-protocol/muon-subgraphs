@@ -2,28 +2,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_muonAppId",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint8",
-            "name": "parity",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct IMuonClient.PublicKey",
-        "name": "_muonPublicKey",
-        "type": "tuple"
-      },
-      {
         "internalType": "address",
         "name": "_muon",
         "type": "address"
@@ -31,54 +9,6 @@
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
-  },
-  {
-    "inputs": [],
-    "name": "AccessControlBadConfirmation",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "neededRole",
-        "type": "bytes32"
-      }
-    ],
-    "name": "AccessControlUnauthorizedAccount",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ECDSAInvalidSignature",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "length",
-        "type": "uint256"
-      }
-    ],
-    "name": "ECDSAInvalidSignatureLength",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "s",
-        "type": "bytes32"
-      }
-    ],
-    "name": "ECDSAInvalidSignatureS",
-    "type": "error"
   },
   {
     "anonymous": false,
@@ -94,6 +24,18 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "mintable",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "hasParameters",
+        "type": "bool"
       }
     ],
     "name": "AddToken",
@@ -115,15 +57,9 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "fromChain",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -233,6 +169,19 @@
   },
   {
     "inputs": [],
+    "name": "APP_ID",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
       {
@@ -281,6 +230,16 @@
         "internalType": "address",
         "name": "tokenAddress",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_mintable",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_transferParameters",
+        "type": "bool"
       }
     ],
     "name": "addToken",
@@ -312,52 +271,38 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "bridgeFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "user",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "nftIds",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "uint256",
-            "name": "fromChain",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "toChain",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "txId",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct MRC721Bridge.ClaimParams",
-        "name": "params",
-        "type": "tuple"
+        "internalType": "uint256[]",
+        "name": "nftId",
+        "type": "uint256[]"
       },
       {
         "internalType": "bytes",
-        "name": "nftData",
+        "name": "nftParams",
         "type": "bytes"
       },
       {
+        "internalType": "uint256[4]",
+        "name": "txParams",
+        "type": "uint256[4]"
+      },
+      {
         "internalType": "bytes",
-        "name": "reqId",
+        "name": "_reqId",
         "type": "bytes"
       },
       {
@@ -378,17 +323,67 @@
             "type": "address"
           }
         ],
-        "internalType": "struct IMuonClient.SchnorrSign",
-        "name": "signature",
-        "type": "tuple"
-      },
-      {
-        "internalType": "bytes",
-        "name": "gatewaySignature",
-        "type": "bytes"
+        "internalType": "struct IMuonV02.SchnorrSign[]",
+        "name": "_sigs",
+        "type": "tuple[]"
       }
     ],
     "name": "claim",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "nftId",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "nftParams",
+        "type": "bytes"
+      },
+      {
+        "internalType": "uint256[4]",
+        "name": "txParams",
+        "type": "uint256[4]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_reqId",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "signature",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "nonce",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IMuonV02.SchnorrSign[]",
+        "name": "_sigs",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "claimFor",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -436,40 +431,6 @@
       }
     ],
     "name": "deposit",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "nftIds",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "toChain",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "depositFor",
     "outputs": [
       {
         "internalType": "uint256",
@@ -595,14 +556,14 @@
         "type": "address"
       },
       {
-        "internalType": "uint256[]",
-        "name": "nftIds",
-        "type": "uint256[]"
+        "internalType": "bool",
+        "name": "transferParams",
+        "type": "bool"
       },
       {
-        "internalType": "bytes",
-        "name": "nftData",
-        "type": "bytes"
+        "internalType": "uint256[]",
+        "name": "nftId",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -683,55 +644,30 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "mintable",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "muon",
     "outputs": [
       {
-        "internalType": "contract IMuonClient",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "muonAppId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "muonPublicKey",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "x",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "parity",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "muonValidGateway",
-    "outputs": [
-      {
-        "internalType": "address",
+        "internalType": "contract IMuonV02",
         "name": "",
         "type": "address"
       }
@@ -756,22 +692,22 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "operator",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "from",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "tokenId",
         "type": "uint256"
       },
       {
         "internalType": "bytes",
-        "name": "",
+        "name": "data",
         "type": "bytes"
       }
     ],
@@ -783,7 +719,7 @@
         "type": "bytes4"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -813,31 +749,13 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "removeToken",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
       },
       {
         "internalType": "address",
-        "name": "callerConfirmation",
+        "name": "account",
         "type": "address"
       }
     ],
@@ -868,62 +786,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_muonAppId",
+        "name": "_val",
         "type": "uint256"
       }
     ],
-    "name": "setMuonAppId",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_addr",
-        "type": "address"
-      }
-    ],
-    "name": "setMuonContract",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_gatewayAddress",
-        "type": "address"
-      }
-    ],
-    "name": "setMuonGateway",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint8",
-            "name": "parity",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct IMuonClient.PublicKey",
-        "name": "_muonPublicKey",
-        "type": "tuple"
-      }
-    ],
-    "name": "setMuonPubKey",
+    "name": "setBridgeFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -987,6 +854,25 @@
         "type": "uint256"
       }
     ],
+    "name": "transferParameters",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "txs",
     "outputs": [
       {
@@ -1003,11 +889,6 @@
         "internalType": "address",
         "name": "user",
         "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "nftData",
-        "type": "bytes"
       }
     ],
     "stateMutability": "view",

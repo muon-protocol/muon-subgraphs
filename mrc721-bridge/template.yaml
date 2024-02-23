@@ -1,4 +1,6 @@
-specVersion: 0.0.2
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
 schema:
   file: ./schema.graphql
 dataSources:
@@ -11,17 +13,29 @@ dataSources:
       startBlock: {{ startBlock }}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - ClaimEntity
-        - DepositEntity
+        - AddToken
+        - Claim
+        - Deposit
+        - RoleAdminChanged
+        - RoleGranted
+        - RoleRevoked
       abis:
         - name: MRC721Bridge
           file: ./abis/MRC721Bridge.json
       eventHandlers:
-        - event: Claim(indexed address,uint256,uint256)
+        - event: AddToken(address,uint256)
+          handler: handleAddToken
+        - event: Claim(indexed address,uint256,indexed uint256,indexed uint256)
           handler: handleClaim
         - event: Deposit(uint256)
           handler: handleDeposit
-      file: ./src/mapping.ts
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+      file: ./src/mrc-721-bridge.ts

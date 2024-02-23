@@ -1,31 +1,26 @@
 import {
-  ApprovalForAll as ApprovalForAllEvent,
-  ERC20Approval as ERC20ApprovalEvent,
-  ERC20Transfer as ERC20TransferEvent,
-  ERC721Approval as ERC721ApprovalEvent,
-  ERC721Transfer as ERC721TransferEvent,
+  AddToken as AddTokenEvent,
+  Claim as ClaimEvent,
+  Deposit as DepositEvent,
   RoleAdminChanged as RoleAdminChangedEvent,
   RoleGranted as RoleGrantedEvent,
   RoleRevoked as RoleRevokedEvent
-} from "../generated/ERC404m/ERC404m"
+} from "../generated/MRC721Bridge/MRC721Bridge"
 import {
-  ApprovalForAll,
-  ERC20Approval,
-  ERC20Transfer,
-  ERC721Approval,
-  ERC721Transfer,
+  AddToken,
+  Claim,
+  Deposit,
   RoleAdminChanged,
   RoleGranted,
   RoleRevoked
 } from "../generated/schema"
 
-export function handleApprovalForAll(event: ApprovalForAllEvent): void {
-  let entity = new ApprovalForAll(
+export function handleAddToken(event: AddTokenEvent): void {
+  let entity = new AddToken(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
-  entity.owner = event.params.owner
-  entity.operator = event.params.operator
-  entity.approved = event.params.approved
+  entity.addr = event.params.addr
+  entity.tokenId = event.params.tokenId
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
@@ -34,13 +29,14 @@ export function handleApprovalForAll(event: ApprovalForAllEvent): void {
   entity.save()
 }
 
-export function handleERC20Approval(event: ERC20ApprovalEvent): void {
-  let entity = new ERC20Approval(
+export function handleClaim(event: ClaimEvent): void {
+  let entity = new Claim(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
-  entity.owner = event.params.owner
-  entity.spender = event.params.spender
-  entity.value = event.params.value
+  entity.user = event.params.user
+  entity.txId = event.params.txId
+  entity.fromChain = event.params.fromChain
+  entity.tokenId = event.params.tokenId
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
@@ -49,43 +45,11 @@ export function handleERC20Approval(event: ERC20ApprovalEvent): void {
   entity.save()
 }
 
-export function handleERC20Transfer(event: ERC20TransferEvent): void {
-  let entity = new ERC20Transfer(
+export function handleDeposit(event: DepositEvent): void {
+  let entity = new Deposit(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.amount = event.params.amount
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleERC721Approval(event: ERC721ApprovalEvent): void {
-  let entity = new ERC721Approval(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.owner = event.params.owner
-  entity.spender = event.params.spender
-  entity.ERC404m_id = event.params.id
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleERC721Transfer(event: ERC721TransferEvent): void {
-  let entity = new ERC721Transfer(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.ERC404m_id = event.params.id
+  entity.txId = event.params.txId
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

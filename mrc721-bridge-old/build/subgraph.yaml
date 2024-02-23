@@ -1,0 +1,27 @@
+specVersion: 0.0.2
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MRC721Bridge
+    network: mainnet
+    source:
+      address: "0x77C7f8D5a7B04c9b5f5614027026D5B68e0DbB86"
+      abi: MRC721Bridge
+      startBlock: 14909304
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - ClaimEntity
+        - DepositEntity
+      abis:
+        - name: MRC721Bridge
+          file: MRC721Bridge/abis/MRC721Bridge.json
+      eventHandlers:
+        - event: Claim(indexed address,uint256,uint256)
+          handler: handleClaim
+        - event: Deposit(uint256)
+          handler: handleDeposit
+      file: MRC721Bridge/MRC721Bridge.wasm
